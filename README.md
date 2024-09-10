@@ -13,6 +13,10 @@
 * Written in GTK, with a port to Qt underway.
 * Released as "remmina" (the main program) and "remmina-plugins".
 
+### Fork Information
+
+This fork of Remmina has been created to make specific edits to allow the project to be built on **Fedora 40**. The necessary changes have been made to ensure compatibility with this version of Fedora while maintaining the original functionality of the project.
+
 ### Installation
 
 [How to install Remmina](https://remmina.org/how-to-install-remmina/),
