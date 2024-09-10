@@ -9,7 +9,6 @@
 
 *Use other desktops remotely, from a tiny screen or large monitors.*
 
-
 * RDP, VNC, SPICE, X2Go, SSH, WWW (HTTP protocol) and EXEC network protocols are supported.
 * Written in GTK, with a port to Qt underway.
 * Released as "remmina" (the main program) and "remmina-plugins".
@@ -21,7 +20,7 @@ editable on [the wiki](https://gitlab.com/Remmina/Remmina/-/wikis/home).
 
 ### Configuration
 
-Set up everything from the graphical interface, or from $HOME/.config/remmina
+Set up everything from the graphical interface, or from `$HOME/.config/remmina`.
 
 ### Contributing
 
@@ -40,8 +39,8 @@ This is the website [donation page](https://remmina.org/wp/donations/).
 
 ### Authors
 
-Maintained by [Hiroyuki Tanaka](https://gitlab.com/myheroyuki), [Antenore Gatta](https://gitlab.com/antenore), [Giovanni Panozzo](https://gitlab.com/giox069) and [Allan Nordhøy](https://gitlab.com/kingu).
-Add yourself in [AUTHORS](AUTHORS) if you have contributed.
+Maintained by [Hiroyuki Tanaka](https://gitlab.com/myheroyuki), [Antenore Gatta](https://gitlab.com/antenore), [Giovanni Panozzo](https://gitlab.com/giox069) and [Allan Nordhøy](https://gitlab.com/kingu). 
+Initially developed by [Vic Lee](https://github.com/llyzs). Add yourself in [AUTHORS](AUTHORS) if you have contributed.
 
 ### Resources
 
@@ -50,5 +49,4 @@ Add yourself in [AUTHORS](AUTHORS) if you have contributed.
 
 ### License
 
-Copylefted libre software, licensed [GPLv2+](https://gitlab.com/Remmina/Remmina/blob/master/COPYING). \
-Initially developed by [Vic Lee](https://github.com/llyzs).
+This project is forked from [Remmina](https://gitlab.com/Remmina/Remmina) by the original authors. It is copylefted libre software, licensed under [GPLv2+](https://gitlab.com/Remmina/Remmina/blob/master/COPYING). Initially developed by [Vic Lee](https://github.com/llyzs) and maintained by [Hiroyuki Tanaka](https://gitlab.com/myheroyuki), [Antenore Gatta](https://gitlab.com/antenore), [Giovanni Panozzo](https://gitlab.com/giox069), and [Allan Nordhøy](https://gitlab.com/kingu).
