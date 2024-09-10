@@ -1094,25 +1094,40 @@ static BOOL remmina_rdp_get_access_token(freerdp* instance, AccessTokenType toke
 	return client_cli_get_access_token(instance, tokenType, token, count);
 }
 
+#include <glib.h>
 static BOOL remmina_rdp_present_gateway_message(freerdp* instance, UINT32 type, BOOL isDisplayMandatory,
-                                           BOOL isConsentMandatory, size_t length,
-                                           const WCHAR* message)
+                                                BOOL isConsentMandatory, size_t length,
+                                                const WCHAR* message)
 {
-	if (!isConsentMandatory && !isDisplayMandatory){
-		return TRUE;
-	}
+    if (!isConsentMandatory && !isDisplayMandatory) {
+        return TRUE;
+    }
 
-	rfContext *rfi;
-	RemminaProtocolWidget *gp;
-	rfi = (rfContext *)instance->context;
-	gp = rfi->protocol_widget;
-	int ret = remmina_plugin_service->protocol_widget_panel_accept(gp, message);
-	if (ret == GTK_RESPONSE_YES){
-		return TRUE;
-	}
-	else{
-		return FALSE;
-	}
+    rfContext *rfi = (rfContext *)instance->context;
+    RemminaProtocolWidget *gp = rfi->protocol_widget;
+
+    // Convert the message from UTF-16 to UTF-8
+    GError *error = NULL;
+    gchar *message_utf8 = g_utf16_to_utf8((const gunichar2 *)message, -1, NULL, NULL, &error);
+
+    if (message_utf8 == NULL) {
+        // Handle the error, possibly log it
+        g_warning("Failed to convert message from UTF-16 to UTF-8: %s", error->message);
+        g_error_free(error);
+        return FALSE;
+    }
+
+    // Pass the converted message to the function
+    int ret = remmina_plugin_service->protocol_widget_panel_accept(gp, message_utf8);
+
+    // Free the allocated UTF-8 string
+    g_free(message_utf8);
+
+    if (ret == GTK_RESPONSE_YES) {
+        return TRUE;
+    } else {
+        return FALSE;
+    }
 }
 
 static int remmina_rdp_logon_error_info(freerdp* instance, UINT32 data, UINT32 type)

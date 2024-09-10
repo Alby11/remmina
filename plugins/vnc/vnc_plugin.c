@@ -683,45 +683,46 @@ static void remmina_plugin_vnc_rfb_fill_buffer(rfbClient *cl, guchar *dest, gint
 	}
 }
 
-gboolean remmina_plugin_vnc_rfb_updatefb(gpointer* data){
-	FrameInfo *frame = (FrameInfo*)data;
-	rfbClient *cl = frame->cl;
-	int x = frame->x;
-	int y = frame->y;
-	int w = frame->w;
-	int h = frame->h;
+gboolean remmina_plugin_vnc_rfb_updatefb(gpointer data)
+{
+    FrameInfo *frame = (FrameInfo *)data;
+    rfbClient *cl = frame->cl;
+    int x = frame->x;
+    int y = frame->y;
+    int w = frame->w;
+    int h = frame->h;
 
+    TRACE_CALL(__func__);
+    RemminaProtocolWidget *gp = rfbClientGetClientData(cl, NULL);
+    RemminaPluginVncData *gpdata = GET_PLUGIN_DATA(gp);
+    gint bytesPerPixel;
+    gint rowstride;
+    gint width;
 
-	TRACE_CALL(__func__);
-	RemminaProtocolWidget *gp = rfbClientGetClientData(cl, NULL);
-	RemminaPluginVncData *gpdata = GET_PLUGIN_DATA(gp);
-	gint bytesPerPixel;
-	gint rowstride;
-	gint width;
+    if (gpdata->running) {
+        LOCK_BUFFER(TRUE);
 
-	if (gpdata->running){
-		LOCK_BUFFER(TRUE);
+        if (w >= 1 || h >= 1) {
+            width = remmina_plugin_service->protocol_plugin_get_width(gp);
+            bytesPerPixel = cl->format.bitsPerPixel / 8;
+            rowstride = cairo_image_surface_get_stride(gpdata->rgb_buffer);
+            cairo_surface_flush(gpdata->rgb_buffer);
+            remmina_plugin_vnc_rfb_fill_buffer(cl, cairo_image_surface_get_data(gpdata->rgb_buffer) + y * rowstride + x * 4,
+                                               rowstride, gpdata->vnc_buffer + ((y * width + x) * bytesPerPixel), width * bytesPerPixel, NULL,
+                                               w, h);
+            cairo_surface_mark_dirty(gpdata->rgb_buffer);
+        }
 
-		if (w >= 1 || h >= 1) {
-			width = remmina_plugin_service->protocol_plugin_get_width(gp);
-			bytesPerPixel = cl->format.bitsPerPixel / 8;
-			rowstride = cairo_image_surface_get_stride(gpdata->rgb_buffer);
-			cairo_surface_flush(gpdata->rgb_buffer);
-			remmina_plugin_vnc_rfb_fill_buffer(cl, cairo_image_surface_get_data(gpdata->rgb_buffer) + y * rowstride + x * 4,
-							rowstride, gpdata->vnc_buffer + ((y * width + x) * bytesPerPixel), width * bytesPerPixel, NULL,
-							w, h);
-			cairo_surface_mark_dirty(gpdata->rgb_buffer);
-		}
+        if (remmina_plugin_service->remmina_protocol_widget_get_current_scale_mode(gp) != REMMINA_PROTOCOL_WIDGET_SCALE_MODE_NONE)
+            remmina_plugin_vnc_scale_area(gp, &x, &y, &w, &h);
 
-		if ((remmina_plugin_service->remmina_protocol_widget_get_current_scale_mode(gp) != REMMINA_PROTOCOL_WIDGET_SCALE_MODE_NONE))
-			remmina_plugin_vnc_scale_area(gp, &x, &y, &w, &h);
+        UNLOCK_BUFFER(TRUE);
 
-		UNLOCK_BUFFER(TRUE);
+        remmina_plugin_vnc_queue_draw_area(gp, x, y, w, h);
+    }
 
-		remmina_plugin_vnc_queue_draw_area(gp, x, y, w, h);
-	}
-	free(frame);
-	return FALSE;
+    free(frame);
+    return FALSE;
 }
 
 static void remmina_plugin_vnc_rfb_got_update(rfbClient *cl, int x, int y, int w, int h)
